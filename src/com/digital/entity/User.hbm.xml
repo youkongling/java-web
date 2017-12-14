@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- UserInfo的HBM 实现映射--> 
+<hibernate-mapping package="com.digital.entity">
+    <class name="User" table = "user_info" catalog="digital">
+      <id name="id" type = "java.lang.Integer">
+	       <column name="id"/>
+    	   <generator class="native"/>
+      </id>
+      <property name="userName" type = "java.lang.String">
+      	   <column name="userName" length="16" not-null="true"/>
+      </property>
+      <property name="password" type = "java.lang.String">
+      	   <column name="password" length="16" not-null="true"/>	
+      </property>
+      <property name="realName" type = "java.lang.String">
+      	   <column name="realName" length="16" not-null="true"/>	
+      </property>
+      <property name="sex" type = "java.lang.String">
+      	   <column name="sex" length="16" not-null="false"/>	
+      </property>
+      <property name="address" type = "java.lang.String">
+      	   <column name="address" length="16" not-null="false"/>	
+      </property>
+      <property name="question" type = "java.lang.String">
+      	   <column name="question" length="16" not-null="false"/>	
+      </property>
+      <property name="answer" type = "java.lang.String">
+      	   <column name="answer" length="16" not-null="false"/>	
+      </property>
+      <property name="email" type = "java.lang.String">
+      	   <column name="email" length="16" not-null="false"/>	
+      </property>
+      <property name="favorate" type = "java.lang.String">
+      	   <column name="favorate" length="16" not-null="false"/>	
+      </property>
+       <property name="score" type = "java.lang.Integer">
+      	   <column name="score" length="16" not-null="false"/>	
+      </property>
+      <property name="regDate" type = "java.util.Date">
+      	   <column name="regDate" not-null="false"/>	
+      </property>
+    </class>
+</hibernate-mapping>

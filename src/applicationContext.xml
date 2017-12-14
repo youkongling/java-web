@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+http://www.springframework.org/schema/tx 
+http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+http://www.springframework.org/schema/aop 
+http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+
+<!-- tx是transaction事务 --> 
+<!-- spring的配置文件 -->
+ <!-- 数据源配置编写 -->
+    
+  <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="jdbcUrl" value="jdbc:mysql://60.205.212.196/digital"/>
+        <property name="user" value="root"></property>
+        <property name="password" value="123456"></property>
+        <!-- <property name="maxPoolSize" value="10"></property>
+        <property name="mainPoolSize" value="5"></property> -->
+    </bean>
+    <!--  创建sessionFactory-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+      <property name="dataSource">
+      <ref bean="dataSource"/></property>
+      <property name="hibernateProperties">
+        <props>
+          <prop key="hibernate.dialect">
+           org.hibernate.dialect.MySQLDialect
+          </prop>
+        </props>
+      </property>
+      <property name="mappingResources">
+       <list>
+             <value>com/digital/entity/User.hbm.xml</value>
+             <value>com/digital/entity/Type.hbm.xml</value>
+				<value>com/digital/entity/ProductInfo.hbm.xml</value>
+       </list>
+      </property>
+    </bean>  
+    <!--  创建事务管理器-->
+    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager" >
+    <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+ <!-- 事务通知 -->
+   <tx:advice id="txAdvice" transaction-manager="transactionManager">
+     <!-- 指定事务传播规则 -->
+     <tx:attributes>
+       <tx:method name="*" propagation="REQUIRED"/>
+     </tx:attributes>
+   </tx:advice>
+ <!-- aop配置 -->
+    <aop:config>
+      <aop:pointcut expression="execution(* com.digital.service.*.*(..))"  id="servMethods"/>
+      <aop:advisor advice-ref="txAdvice" pointcut-ref="servMethods"/>
+    </aop:config>
+    
+    <!--配置dao层  -->
+      <bean id="UsInDao" class="com.digital.dao.impl.UsInDaoImpl">
+    <property name="sessionFactory" ref="sessionFactory"> </property>
+    </bean>
+     <bean id="UsInSev" class="com.digital.service.UsInSeImpl">
+    <property name="UID" ref="UsInDao"></property>
+    </bean>
+    <bean id="ulogin" class="com.digital.action.UsInAction">
+    <property name="UIS" ref="UsInSev"></property>
+    </bean>
+     
+    <bean id="TyDa" class="com.digital.dao.impl.TypeDaoImpl">
+    	<property name="sefa" ref="sessionFactory"/>
+    </bean>    
+    <bean id="tySe" class="com.digital.service.impl.TypeServiceImpl">
+    	<property name="td" ref="TyDa"></property>
+    </bean>
+    
+    <bean id="ProductInfoDa" class="com.digital.dao.impl.ProductInfoDaoImpl">
+    	<property name="sefa" ref="sessionFactory"/>
+    </bean>
+    <!-- 配置service层 -->
+    <bean id="prInSe" class="com.digital.service.impl.ProductInfoServiceImpl">
+    	<property name="pidao" ref="ProductInfoDa"></property>
+    </bean>
+    <!-- 定义ProductInfoAction类 ，并为其中属性userInfoService注入值 -->
+	<bean id="piAction" class="com.digital.action.PrInAction" >
+		<property name="pis" ref="prInSe"></property>
+		<property name="ts" ref="tySe"></property>
+	</bean>
+   
+   <bean id="cartAction" class="com.digital.action.CartAction" >
+		<property name="pis" ref="prInSe"></property>
+	</bean>
+   
+   
+   
+    
+</beans> 
